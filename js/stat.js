@@ -15,6 +15,8 @@ var BAR_GAP = 50;
 var BAR_MAX_HEIGHT = 150;
 var BAR_LABEL_GAP = 2;
 
+var barBaseLine = CLOUD_TOP + CLOUD_HEIGHT - STAT_PADDING - TEXT_LINE_HEIGHT - BAR_LABEL_GAP;
+
 var renderCloudShape = function (ctx, left, top, color) {
   ctx.fillStyle = color;
   ctx.beginPath();
@@ -31,7 +33,7 @@ var renderCloudShape = function (ctx, left, top, color) {
   ctx.fill();
 };
 
-var maxArrayElement = function (arr) {
+var getMaxArrayElement = function (arr) {
   var maxValue = arr[0];
   for (var i = 1; i < arr.length; i++) {
     if (arr[i] > maxValue) {
@@ -54,9 +56,8 @@ window.renderStatistics = function (ctx, playerNames, playerTimes) {
   ctx.fillText('Список результатов:', CLOUD_LEFT + CLOUD_WIDTH / 2, CLOUD_TOP + STAT_PADDING + TEXT_LINE_HEIGHT);
 
   var playerCount = playerNames.length;
-  var barBaseLine = CLOUD_TOP + CLOUD_HEIGHT - STAT_PADDING - TEXT_LINE_HEIGHT - BAR_LABEL_GAP;
   var barCenterStartX = CLOUD_LEFT + (CLOUD_WIDTH - (BAR_WIDTH + BAR_GAP) * (playerCount - 1)) / 2;
-  var maxPlayerTime = maxArrayElement(playerTimes);
+  var maxPlayerTime = getMaxArrayElement(playerTimes);
 
   for (var i = 0; i < playerCount; i++) {
     var barCenterX = barCenterStartX + (BAR_WIDTH + BAR_GAP) * i;
