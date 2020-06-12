@@ -29,9 +29,13 @@ var makeWizardElement = function (character) {
 };
 
 var renderWizards = function (characters) {
+  var fragment = document.createDocumentFragment();
+
   for (var i = 0; i < characters.length; i++) {
-    similarWizardsBlock.appendChild(makeWizardElement(characters[i]));
+    fragment.appendChild(makeWizardElement(characters[i]));
   }
+
+  similarWizardsBlock.appendChild(fragment);
 };
 
 setupWindow.classList.remove('hidden');
