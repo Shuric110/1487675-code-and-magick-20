@@ -6,6 +6,9 @@ var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161
 var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
 
 var setupWindow = document.querySelector('.setup');
+var setupWindowOpen = document.querySelector('.setup-open');
+var setupWindowClose = setupWindow.querySelector('.setup-close');
+var setupWindowOpenIcon = document.querySelector('.setup-open-icon');
 var setupSimilarBlock = document.querySelector('.setup-similar');
 var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
 var similarWizardsBlock = document.querySelector('.setup-similar-list');
