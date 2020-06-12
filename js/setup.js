@@ -38,13 +38,17 @@ var renderWizards = function (characters) {
   similarWizardsBlock.appendChild(fragment);
 };
 
-setupWindow.classList.remove('hidden');
+var openSetupWindow = function () {
+  var characters = [];
+  for (var i = 0; i < 4; i++) {
+    characters.push(makeRandomCharacter());
+  }
 
-var characters = [];
-for (var i = 0; i < 4; i++) {
-  characters.push(makeRandomCharacter());
-}
+  renderWizards(characters);
 
-renderWizards(characters);
+  setupSimilarBlock.classList.remove('hidden');
+  setupWindow.classList.remove('hidden');
+};
 
-setupSimilarBlock.classList.remove('hidden');
+
+openSetupWindow();
