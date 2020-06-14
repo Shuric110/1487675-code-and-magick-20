@@ -4,11 +4,17 @@ var FIRST_NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'К�
 var LAST_NAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
 var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
 var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
+var FIREBALL_COLORS = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
+
+var KEY_ESC = 27;
+var KEY_ENTER = 13;
 
 var setupWindow = document.querySelector('.setup');
 var setupWindowOpen = document.querySelector('.setup-open');
 var setupWindowClose = setupWindow.querySelector('.setup-close');
 var setupWindowOpenIcon = document.querySelector('.setup-open-icon');
+var setupForm = document.querySelector('.setup-wizard-form');
+var setupUserNameInput = document.querySelector('.setup-user-name');
 var setupSimilarBlock = document.querySelector('.setup-similar');
 var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
 var similarWizardsBlock = document.querySelector('.setup-similar-list');
@@ -38,7 +44,17 @@ var renderWizards = function (characters) {
     fragment.appendChild(makeWizardElement(characters[i]));
   }
 
+  while (similarWizardsBlock.lastElementChild) {
+    similarWizardsBlock.removeChild(similarWizardsBlock.lastElementChild);
+  }
   similarWizardsBlock.appendChild(fragment);
+};
+
+var onSetupWindowKeyDown = function (evt) {
+  if (evt.keyCode === KEY_ESC) {
+    evt.preventDefault();
+    closeSetupWindow();
+  }
 };
 
 var openSetupWindow = function () {
@@ -51,7 +67,72 @@ var openSetupWindow = function () {
 
   setupSimilarBlock.classList.remove('hidden');
   setupWindow.classList.remove('hidden');
+
+  window.addEventListener('keydown', onSetupWindowKeyDown);
+};
+
+var closeSetupWindow = function () {
+  setupWindow.classList.add('hidden');
+  window.removeEventListener('keydown', onSetupWindowKeyDown);
+};
+
+var setColorClickEvent = function (selector, colorProperty, colors, inputName) {
+  var element = setupWindow.querySelector(selector);
+  var input = setupForm.elements[inputName];
+  element.addEventListener('click', function () {
+    var newColor = colors[Math.floor(Math.random() * colors.length)];
+    element.style[colorProperty] = newColor;
+    input.value = newColor;
+  });
 };
 
 
-openSetupWindow();
+setupWindowOpen.addEventListener('click', function () {
+  openSetupWindow();
+});
+
+setupWindowOpenIcon.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === KEY_ENTER) {
+    openSetupWindow();
+  }
+});
+
+setupWindowClose.addEventListener('click', function () {
+  closeSetupWindow();
+});
+
+setupWindowClose.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === KEY_ENTER) {
+    closeSetupWindow();
+  }
+});
+
+setupUserNameInput.addEventListener('invalid', function () {
+  if (setupUserNameInput.validity.tooShort) {
+    setupUserNameInput.setCustomValidity('Слишком короткое значение (минимум ' + setupUserNameInput.minLength + ' симв.)');
+  } else if (setupUserNameInput.validity.tooLong) {
+    setupUserNameInput.setCustomValidity('Слишком длинное значение (максимум ' + setupUserNameInput.maxLength + ' симв.)');
+  } else if (setupUserNameInput.validity.valueMissing) {
+    setupUserNameInput.setCustomValidity('Обязательное поле');
+  } else {
+    setupUserNameInput.setCustomValidity('');
+  }
+});
+
+setupUserNameInput.addEventListener('input', function () {
+  var valueLength = setupUserNameInput.value.length;
+  var minValueLength = setupUserNameInput.minLength;
+  var maxValueLength = setupUserNameInput.maxLength;
+
+  if (valueLength < minValueLength) {
+    setupUserNameInput.setCustomValidity('Ещё ' + (minValueLength - valueLength) + ' симв. (минимум ' + minValueLength + ')');
+  } else if (valueLength > maxValueLength) {
+    setupUserNameInput.setCustomValidity('Удалите лишние ' + (valueLength - maxValueLength) + ' симв. (максимум ' + maxValueLength + ')');
+  } else {
+    setupUserNameInput.setCustomValidity('');
+  }
+});
+
+setColorClickEvent('.setup-wizard .wizard-coat', 'fill', COAT_COLORS, 'coat-color');
+setColorClickEvent('.setup-wizard .wizard-eyes', 'fill', EYES_COLORS, 'eyes-color');
+setColorClickEvent('.setup-fireball-wrap', 'backgroundColor', FIREBALL_COLORS, 'fireball-color');
