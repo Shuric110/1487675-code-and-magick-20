@@ -2,11 +2,16 @@
 
 (function () {
 
+  var MESSAGE_FADEOUT_DELAY = 1000;
+  var KEY_ENTER = 'Enter';
+  var KEY_ESCAPE = 'Escape';
+  var ACTION_CANCEL = 'cancel';
+
   var openDialog = function (dlg, dlgCloseButtons, dlgMoveHandles, closeCallback) {
 
-    var closeDialog = function () {
-      if (closeCallback && !closeCallback()) {
-        return;
+    var closeDialog = function (action) {
+      if (closeCallback && !closeCallback(action)) {
+        return false;
       }
 
       for (var i = 0; i < dlgCloseButtons.length; i++) {
@@ -19,21 +24,24 @@
       window.removeEventListener('keydown', onGlobalKeyDown);
 
       dlg.classList.add('hidden');
+      delete dlg.closeDialog;
+
+      return true;
     };
 
     var onGlobalKeyDown = function (evt) {
-      if (evt.key === 'Escape') {
-        closeDialog();
+      if (evt.key === KEY_ESCAPE) {
+        closeDialog(ACTION_CANCEL);
       }
     };
 
     var onCloseClick = function () {
-      closeDialog();
+      closeDialog(ACTION_CANCEL);
     };
 
     var onCloseKeyDown = function (evt) {
-      if (evt.key === 'Enter') {
-        closeDialog();
+      if (evt.key === KEY_ENTER) {
+        closeDialog(ACTION_CANCEL);
       }
     };
 
@@ -79,14 +87,44 @@
     }
     window.addEventListener('keydown', onGlobalKeyDown);
 
+    dlg.closeDialog = closeDialog;
     dlg.style.top = '';
     dlg.style.left = '';
     dlg.classList.remove('hidden');
   };
 
+  var closeDialog = function (dlg, action) {
+    if (dlg.closeDialog) {
+      return dlg.closeDialog(action);
+    }
+    return false;
+  };
+
+
+  var showError = function (errorText) {
+    var errorWindow = document.createElement('DIV');
+    errorWindow.classList.add('error-message');
+    errorWindow.textContent = errorText;
+    document.body.appendChild(errorWindow);
+
+    var onMouseEnter = function () {
+      errorWindow.removeEventListener('mouseenter', onMouseEnter);
+      errorWindow.classList.add('fade-out');
+      window.setTimeout(function () {
+        document.body.removeChild(errorWindow);
+      }, MESSAGE_FADEOUT_DELAY);
+    };
+
+    errorWindow.addEventListener('mouseenter', onMouseEnter);
+  };
+
 
   window.dialog = {
-    openDialog: openDialog
+    ACTION_CANCEL: ACTION_CANCEL,
+
+    openDialog: openDialog,
+    closeDialog: closeDialog,
+    showError: showError
   };
 
 })();
