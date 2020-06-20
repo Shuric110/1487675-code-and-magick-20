@@ -1019,3 +1019,28 @@ input[type=radio]:checked + .review-mark-label
 
     opacity: 0;
 }
+
+.error-message {
+  display: block;
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  border: red solid 2px;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #FF7777;
+  color: red;
+  z-index: 10;
+}
+
+.error-message.fade-out {
+  transition: opacity 1s ease-in;
+  opacity: 0;
+}
+
+.error-message::before {
+  content: "Ошибка";
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
