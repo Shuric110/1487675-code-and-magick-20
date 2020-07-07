@@ -5,6 +5,8 @@
   var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
   var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
   var FIREBALL_COLORS = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
+  var IMAGE_MIME_TYPE = 'image/';
+  var FILE_WRONG_TYPE_ERROR = 'Выбранный файл не является изображением';
 
   var setupWindow = document.querySelector('.setup');
   var setupWindowOpen = document.querySelector('.setup-open');
@@ -13,10 +15,12 @@
   var setupWindowOpenIcon = document.querySelector('.setup-open-icon');
   var setupForm = document.querySelector('.setup-wizard-form');
   var setupUserNameInput = document.querySelector('.setup-user-name');
+  var setupAvatarPicture = document.querySelector('.setup-user-pic');
 
   var setupCoatColorInput = setupForm.elements['coat-color'];
   var setupEyesColorInput = setupForm.elements['eyes-color'];
   var setupFireballColorInput = setupForm.elements['fireball-color'];
+  var setupAvatarInput = setupForm.elements['avatar'];
 
   var setupWizardCoat = document.querySelector('.setup-wizard .wizard-coat');
   var setupWizardEyes = document.querySelector('.setup-wizard .wizard-eyes');
@@ -49,6 +53,20 @@
     } else {
       setupUserNameInput.setCustomValidity('');
     }
+  };
+
+  var onAvatarFileChange = function () {
+    var file = setupAvatarInput.files[0];
+    if (!file.type.startsWith(IMAGE_MIME_TYPE)) {
+      window.dialog.showError(FILE_WRONG_TYPE_ERROR);
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.addEventListener('load', function (evt) {
+      setupAvatarPicture.src = evt.target.result;
+    });
+    reader.readAsDataURL(file);
   };
 
   var onSubmit = function (evt) {
@@ -88,6 +106,7 @@
     setupWizardEyes.addEventListener('click', onWizardEyesClick);
     setupWizardFireball.addEventListener('click', onWizardFireballClick);
     setupForm.addEventListener('submit', onSubmit);
+    setupAvatarInput.addEventListener('change', onAvatarFileChange);
 
     window.dialog.openDialog(setupWindow, [setupWindowClose], [setupWindowUpload], function (action) {
       if (action === window.dialog.ACTION_CANCEL && document.activeElement === setupUserNameInput) {
@@ -100,6 +119,7 @@
       setupWizardEyes.removeEventListener('click', onWizardEyesClick);
       setupWizardFireball.removeEventListener('click', onWizardFireballClick);
       setupForm.removeEventListener('submit', onSubmit);
+      setupAvatarInput.removeEventListener('change', onAvatarFileChange);
 
       return true;
     });
